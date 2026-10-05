@@ -45,3 +45,51 @@ def get_all_expenses():
     conn.close()
     return expenses
 
+def get_expense_by_id(expense_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+
+        "SELECT * FROM expenses WHERE id=?",
+        (expense_id,)
+    )
+    expense = cursor.fetchone()
+    conn.close()
+
+    return expense
+
+def update_expense(expense_id, title, amount, category, date):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE expenses
+        SET title=?, amount=?, category=?, date=?
+        WHERE id=?
+        """,
+        (title, amount, category, date,expense_id)
+    )
+
+    rows_updated = cursor.rowcount
+
+    conn.commit()
+    conn.close()
+
+    return rows_updated
+
+
+def delete_expense(expense_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM expenses WHERE id=?",
+        (expense_id,)
+    )
+
+    rows_deleted = cursor.rowcount
+
+    conn.commit()
+    conn.close()
