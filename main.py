@@ -5,7 +5,12 @@ from dbase import (
     get_all_expenses,
     get_expense_by_id,
     update_expense,
-    delete_expense
+    delete_expense,
+    get_expenses_by_category,
+    get_total_expense,
+    get_category_summary,
+    get_expenses_by_date,
+    get_expenses_by_month
 )
 
 app = Flask(__name__)
@@ -132,6 +137,65 @@ def remove_expense(expense_id):
         "message":"Expense Deleted successfully"
     }), 200
 
-   
+@app.route("/expenses/category/<category>", methods=["GET"])
+def expenses_by_category(category):
+
+    expenses = get_expenses_by_category(category)
+
+    if not expenses:
+        return jsonify({
+            "message": "No Expenses found for this category"
+        }), 404
+
+    return jsonify(expenses), 200
+
+@app.route("/expenses/total", methods=["GET"])
+def total_expenses():
+
+    total = get_total_expense()
+
+    return jsonify({
+        "total expense": total
+    }), 200
+
+@app.route("/expenses/summary/category", methods=["GET"])
+def category_summary():
+
+    summary = get_category_summary()
+
+    result = {}
+
+    for category, total in summary:
+        result[category] = total
+
+    return jsonify(result), 200
+
+
+@app.route("/expenses/date/<date>", methods=["GET"])
+def expenses_by_date(date):
+
+    expenses = get_expenses_by_date(date)
+
+    if not expenses:
+        return jsonify({
+            "message": "No expenses for this date"
+        }), 404
+
+    return jsonify(expenses), 200
+
+
+@app.route("/expenses/month/<month>", methods=["GET"])
+def expenses_by_month(month):
+
+    expenses = get_expenses_by_month(month)
+
+    if not expenses:
+        return jsonify({
+            "message": "No expenses for this month"
+        }), 404
+
+    return jsonify(expenses), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True)

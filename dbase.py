@@ -93,3 +93,80 @@ def delete_expense(expense_id):
 
     conn.commit()
     conn.close()
+
+def get_expenses_by_category(category):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM expenses where category =?",
+        (category,)
+    )
+
+    expenses = cursor.fetchall()
+
+    conn.close()
+
+    return expenses
+
+def get_total_expense():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT SUM(amount) FROM expenses"
+    )
+
+    total = cursor.fetchone()[0]
+
+    conn.close()
+
+    return total if total else 0
+
+def get_category_summary():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT category, SUM(amount)
+        FROM expenses
+        GROUP BY category
+        """
+    )
+
+    summary = cursor.fetchall()
+    conn.close()
+
+    return summary
+
+def get_expenses_by_date(date):
+    conn=get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM expenses WHERE date=?",
+        (date,)
+    )
+
+    expenses = cursor.fetchall()
+    conn.close()
+
+    return expenses
+
+def get_expenses_by_month(month):
+    conn = get_connection()
+    cursor=conn.cursor()
+
+    month_pattern = month + "%"
+
+    cursor.execute(
+        "SELECT * FROM expenses WHERE date LIKE ?",
+        (month_pattern,)
+    )
+
+    expenses = cursor.fetchall()
+    conn.close()
+
+    return expenses
+
