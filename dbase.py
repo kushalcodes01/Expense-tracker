@@ -170,3 +170,38 @@ def get_expenses_by_month(month):
 
     return expenses
 
+def get_monthly_summary(month):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    month_pattern = month +"%"
+
+    cursor.execute(
+        """
+        SELECT SUM(amount)
+        FROM expenses
+        WHERE date LIKE ?""",
+        (month_pattern,)
+    )
+    total = cursor.fetchone()[0]
+
+    conn.close()
+
+    return total if total else 0
+
+def search_expenses(title):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    search_pattern = "%" + title + "%"
+
+    cursor.execute(
+        """
+        SELECT * FROM expenses 
+        WHERE title LIKE ?""",
+        (search_pattern,)
+    )
+    expenses = cursor.fetchall()
+
+    conn.close()
+    return expenses

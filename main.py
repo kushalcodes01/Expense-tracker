@@ -10,7 +10,9 @@ from dbase import (
     get_total_expense,
     get_category_summary,
     get_expenses_by_date,
-    get_expenses_by_month
+    get_expenses_by_month,
+    get_monthly_summary,
+    search_expenses
 )
 
 app = Flask(__name__)
@@ -196,6 +198,27 @@ def expenses_by_month(month):
 
     return jsonify(expenses), 200
 
+@app.route("/expenses/month-summary/<month>", methods=["GET"])
+def monthly_summary(month):
+
+    total = get_monthly_summary(month)
+
+    return jsonify({
+        "month": month,
+        "Total_expense": total
+    }), 200
+
+@app.route("/expenses/search/<title>", methods=["GET"])
+def search_by_title(title):
+
+    expenses= search_expenses(title)
+
+    if not expenses:
+        return jsonify({
+            "message": "No Expenses found"
+        }), 404
+
+    return jsonify(expenses), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
